@@ -15,7 +15,9 @@ namespace minimal_api.Infrastructure.Db
             _configurationAppSettings = configurationAppSettings;
         }
 
+        //Mapeando as entidades para o banco de dados
         public DbSet<Administrator> Administrators { get; set; } = default!;
+        public DbSet<Vehicle> Vehicles { get; set; } = default!;
 
         //Seed -> Função que popula o banco de dados com dados iniciais
         protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -10,15 +10,16 @@ namespace minimal_api.Domain.Entities.Services
 {
     public class AdministratorService : IAdministratorService
     {
-        private readonly AppDbContext _contexto;
-        public AdministratorService(AppDbContext contexto)
+        private readonly AppDbContext _context;
+        public AdministratorService(AppDbContext context)
         {
-            _contexto = contexto;
+            _context = context;
         }
 
         public Administrator? Login(LoginDTO loginDTO)
         {
-            var adm = _contexto.Administrators.Where(x => x.Email == loginDTO.Email && x.Password == loginDTO.Password).FirstOrDefault();
+            var adm = _context.Administrators.Where(x => x.Email == loginDTO.Email
+                && x.Password == loginDTO.Password).FirstOrDefault();
 
             return adm;
         }

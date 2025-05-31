@@ -27,6 +27,7 @@ var app = builder.Build();
 app.MapGet("/", () => "Hello World!");
 
 //DTO -> Data Transfer Object
+//FromBody -> Indica que o objeto será enviado no corpo da requisição
 app.MapPost("/login", ([FromBody] LoginDTO loginDTO, IAdministratorService administratorService) =>
 {
     if (administratorService.Login(loginDTO) != null)

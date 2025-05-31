@@ -7,21 +7,20 @@ using System.Threading.Tasks;
 
 namespace minimal_api.Domain.Entities
 {
-    public class Administrator
+    public class Vehicle
     {
         [Key]
         public Guid Id { get; set; } = Guid.NewGuid();
 
         [Required]
-        [StringLength(255)]
-        public string Email { get; set; } = default!;
+        [StringLength(150)]
+        public string Name { get; set; } = default!;
 
         [Required]
-        [StringLength(50)]
-        public string Password { get; set; } = default!;
+        [StringLength(100)]
+        public string Brand { get; set; } = default!;
 
         [Required]
-        [StringLength(10)]
-        public string Profile { get; set; } = default!;
+        public int Year { get; set; }
     }
 }
