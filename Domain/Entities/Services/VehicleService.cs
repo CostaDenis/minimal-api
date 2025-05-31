@@ -29,7 +29,7 @@ namespace minimal_api.Domain.Entities.Services
             _context.SaveChanges();
         }
 
-        public List<Vehicle> GetAll(int page = 1, string? name = null, string? brand = null)
+        public List<Vehicle> GetAll(int? page = 1, string? name = null, string? brand = null)
         {
             var query = _context.Vehicles.AsQueryable();
             int pageSize = 10;
@@ -39,7 +39,8 @@ namespace minimal_api.Domain.Entities.Services
                 query = query.Where(x => EF.Functions.Like(x.Name.ToUpper(), $"%{name.ToUpper()}%"));
             }
 
-            query = query.Skip((page - 1) * pageSize).Take(pageSize);
+            if (page != null)
+                query = query.Skip(((int)page - 1) * pageSize).Take(pageSize);
 
             return query.ToList();
 
