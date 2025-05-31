@@ -6,11 +6,18 @@ using minimal_api.Domain.DTOs;
 using minimal_api.Domain.Entities;
 using minimal_api.Domain.Entities.Interfaces;
 using minimal_api.Domain.Entities.Services;
+using minimal_api.Domain.ModelViews;
 using minimal_api.Infrastructure.Db;
 
+#region Builder
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddScoped<IAdministratorService, AdministratorService>();
+builder.Services.AddScoped<IVehicleService, VehicleService>();
+
+//Adiciona Swagger
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
@@ -21,14 +28,17 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 });
 
 var app = builder.Build();
+#endregion
+
+#region Home
+app.MapGet("/", () => Results.Json(new Home()));
+#endregion
 
 
-
-app.MapGet("/", () => "Hello World!");
-
+#region Administrators
 //DTO -> Data Transfer Object
 //FromBody -> Indica que o objeto será enviado no corpo da requisição
-app.MapPost("/login", ([FromBody] LoginDTO loginDTO, IAdministratorService administratorService) =>
+app.MapPost("/administrator/login", ([FromBody] LoginDTO loginDTO, IAdministratorService administratorService) =>
 {
     if (administratorService.Login(loginDTO) != null)
     {
@@ -38,6 +48,28 @@ app.MapPost("/login", ([FromBody] LoginDTO loginDTO, IAdministratorService admin
         return Results.Unauthorized();
 
 });
+#endregion
+
+#region Vehicles
+app.MapPost("/vehicle", ([FromBody] VehicleDTO vehicleDTO, IVehicleService vehicleService) =>
+{
+    var vehicle = new Vehicle
+    {
+        Name = vehicleDTO.Name,
+        Brand = vehicleDTO.Brand,
+        Year = vehicleDTO.Year
+    };
+
+    vehicleService.Create(vehicle);
+
+    return Results.Created($"/vehicle/{vehicle.Id}", vehicle);
+});
+#endregion
+
+#region App
+app.UseSwagger();
+app.UseSwaggerUI();
 
 
 app.Run();
+#endregion
