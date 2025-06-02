@@ -50,8 +50,35 @@ app.MapPost("/administrator/login", ([FromBody] LoginDTO loginDTO, IAdministrato
 #endregion
 
 #region Vehicles
+ValidationError ValidationDTO(VehicleDTO vehicleDTO)
+{
+    var messages = new ValidationError
+    {
+        Message = new List<string>()
+    };
+
+    if (string.IsNullOrEmpty(vehicleDTO.Name))
+        messages.Message.Add("O nome do veículo não pode ser vazio.");
+
+
+    if (string.IsNullOrEmpty(vehicleDTO.Brand))
+        messages.Message.Add("A marca do veículo não pode ser vazia.");
+
+    if (vehicleDTO.Year < 1886)
+        messages.Message.Add("O ano do veículo não pode ser menor que 1886, ano do primeiro carro.");
+
+    return messages;
+}
+
+
 app.MapPost("/vehicle", ([FromBody] VehicleDTO vehicleDTO, IVehicleService vehicleService) =>
 {
+    var validation = ValidationDTO(vehicleDTO);
+    if (validation.Message.Count > 0)
+    {
+        return Results.BadRequest(validation);
+    }
+
     var vehicle = new Vehicle
     {
         Name = vehicleDTO.Name,
@@ -86,6 +113,13 @@ app.MapGet("/vehicle/{id}", ([FromRoute] Guid id, IVehicleService vehicleService
 
 app.MapPut("/vehicle/{id}", ([FromRoute] Guid id, VehicleDTO vehicleDTO, IVehicleService vehicleService) =>
 {
+
+    var validation = ValidationDTO(vehicleDTO);
+    if (validation.Message.Count > 0)
+    {
+        return Results.BadRequest(validation);
+    }
+
     var vehicle = vehicleService.GetById(id);
 
     if (vehicle == null)
