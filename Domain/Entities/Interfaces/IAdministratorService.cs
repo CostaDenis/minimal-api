@@ -9,5 +9,8 @@ namespace minimal_api.Domain.Entities.Interfaces
     public interface IAdministratorService
     {
         Administrator? Login(LoginDTO loginDTO);
+        void Create(Administrator administrator);
+        List<Administrator> GetAll(int? page);
+        Administrator? GetById(Guid id);
     }
 }

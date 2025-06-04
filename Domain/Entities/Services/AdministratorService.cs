@@ -23,5 +23,28 @@ namespace minimal_api.Domain.Entities.Services
 
             return adm;
         }
+
+        public void Create(Administrator administrator)
+        {
+            _context.Administrators.Add(administrator);
+            _context.SaveChanges();
+        }
+
+        public List<Administrator> GetAll(int? page = 1)
+        {
+            var query = _context.Administrators.AsQueryable();
+            int pageSize = 10;
+
+            if (page != null)
+                query = query.Skip(((int)page - 1) * pageSize).Take(pageSize);
+
+            return query.ToList();
+
+        }
+
+        public Administrator? GetById(Guid id)
+        {
+            return _context.Administrators.Where(x => x.Id == id).FirstOrDefault();
+        }
     }
 }
